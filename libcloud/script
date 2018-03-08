@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+from os import path
+
+awskey={}
+aws_cred_path = path.expanduser('~/.aws/credentials')
+
+with open(aws_cred_path,'r') as f:
+    for i,line in enumerate(f):
+        if i>0:
+            key_id,val = line.partition('=')[::2]
+            awskey.update({key_id.strip():val.strip()})
+
+ACCESS_ID=awskey['aws_access_key_id']
+SECRET_ID=awskey['aws_secret_access_key']
+
+driver=get_driver(Provider.EC2)     #class
+conn=driver(ACCESS_ID,SECRET_ID)    #object
+
+print(conn.list_key_pairs())
