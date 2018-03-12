@@ -1,7 +1,14 @@
 #!/usr/bin/env python
+
 from libcloud.compute.types import Provider
 from libcloud.compute.providers import get_driver
+from libcloud.compute.base import Node, NodeDriver, NodeLocation, NodeSize
 from os import path
+
+class TestEc2(object):
+
+    def __init__(self, id):
+        self.id = id
 
 awskey={}
 aws_cred_path = path.expanduser('~/.aws/credentials')
@@ -18,4 +25,6 @@ SECRET_ID=awskey['aws_secret_access_key']
 driver=get_driver(Provider.EC2)     #class
 conn=driver(ACCESS_ID,SECRET_ID)    #object
 
-print(conn.list_key_pairs())
+node=TestEc2('i-055c8562829bf78d4')
+print(conn.destroy_node(node))
+
