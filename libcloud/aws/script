@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+from os import path
+
+awskey={}
+aws_cred_path = path.expanduser('~/.aws/credentials')
+
+with open(aws_cred_path,'r') as f:
+    for i,line in enumerate(f):
+        if i>0:
+            key_id,val = line.partition('=')[::2]
+            awskey.update({key_id.strip():val.strip()})
+
+ACCESS_ID=awskey['aws_access_key_id']
+SECRET_ID=awskey['aws_secret_access_key']
+
+driver=get_driver(Provider.EC2)     #class
+conn=driver(ACCESS_ID,SECRET_ID)    #object
+
+# create new key pair using specified name
+def create_key_pair(keypair_name):
+    conn.create_key_pair(name=keypair_name)
+
+# import a key pair from a predefined key in a specific path
+def import_key_pair_from_file(keypair_name,key_file_path):
+    key_file_path=path.expanduser(key_file_path)
+    conn.import_key_pair_from_file(name=keypair_name, key_file_path=key_file_path)
+
+# retrieve a single key pair
+def get_key_pair(keypair_name):
+    print(conn.get_key_pair(keypair_name))
+
+# not implemented yet for aws driver
+# def delete_key_pair(keypair_name):
+#    conn.delete_key_pair(name=keypair_name)
+
+
+# retrieve available key pairs
+def list_key_pair():
+    print(conn.list_key_pairs())
+
+
+#create_key_pair('dummy')
+#import_key_pair_from_file('demo','~/.ssh/id_rsa.pub')
+#get_key_pair('test')
+list_key_pair()
+
