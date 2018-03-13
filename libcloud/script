@@ -5,26 +5,42 @@ from libcloud.compute.providers import get_driver
 from libcloud.compute.base import Node, NodeDriver, NodeLocation, NodeSize
 from os import path
 
-class TestEc2(object):
+class AwsCloud:
+    __awskey                = {}
+    __aws_credential_path   = None
+    __access_id             = None
+    __secret_id             = None
+    __id                    = None
+    __name                  = None
 
-    def __init__(self, id):
+    def __init__(self):
+        self.__aws_credential_path  = path.expanduser('~/.aws/credentials')
+
+    def __enter__(self):
+        with open(self.__aws_credential_path,'r') as f:
+            for i,line in enumerate(f):
+                if i>0:
+                    key_id,val = line.partition('=')[::2]
+                    self.__awskey.update({key_id.strip():val.strip()})
+
+        self.__access_id = self.__awskey['aws_access_key_id']
+        self.__secret_id = self.__awskey['aws_secret_access_key']
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        return self
+
+    def get_id(self, id):
         self.id = id
 
-awskey={}
-aws_cred_path = path.expanduser('~/.aws/credentials')
+    def get_name(self, name):
+        self.name = name
 
-with open(aws_cred_path,'r') as f:
-    for i,line in enumerate(f):
-        if i>0:
-            key_id,val = line.partition('=')[::2]
-            awskey.update({key_id.strip():val.strip()})
+    def connect_aws(self):
+        cls     = get_driver(Provider.EC2)                          #class
+        driver  = cls(self.__access_id, self.__secret_id)           #object
+        return driver
 
-ACCESS_ID=awskey['aws_access_key_id']
-SECRET_ID=awskey['aws_secret_access_key']
-
-driver=get_driver(Provider.EC2)     #class
-conn=driver(ACCESS_ID,SECRET_ID)    #object
-
-node=TestEc2('i-055c8562829bf78d4')
-print(conn.destroy_node(node))
-
+with AwsCloud() as cloud:
+    conn = cloud.connect_aws()
+    print(conn.list_key_pairs())
