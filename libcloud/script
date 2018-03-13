@@ -49,10 +49,17 @@ with AwsCloud() as cloud:
     conn = cloud.connect_aws()
 
     """
+        create key pair
+    """
+    #print("Enter new keypair name:")
+    #key_name = input()
+    #conn.create_key_pair(key_name)
+
+    """
         add key pair from file
     """
     #key_file_path = path.expanduser('~/.ssh/id_rsa.pub')
-    #print("new keypair name: ")
+    #print("Enter new keypair name: ")
     #key_name=input()
     #conn.import_key_pair_from_file(name=key_name, key_file_path=key_file_path)
 
@@ -64,5 +71,77 @@ with AwsCloud() as cloud:
     #key = cloud.get_name(key_name)
     #conn.delete_key_pair(key)
 
+    """
+        list keypair
+    """
+    #print(conn.list_key_pairs())
 
-    print(conn.list_key_pairs())
+
+    """
+        create security group
+    """
+    #print("Enter security group name:")
+    #sg_name = input()
+    #print("Enter security group description:")
+    #sg_desc = input()
+    #conn.ex_create_security_group(name=sg_name, description=sg_desc)
+
+    """
+        delete security group by name
+    """
+    #print("Enter security group name to delete:")
+    #sg_name=input()
+    #conn.ex_delete_security_group_by_name(group_name=sg_name)
+
+    """
+        authorize security group rule (default all traffic as outbound)
+    """
+    #print("Enter security group name:")
+    #sg_name = input()
+    #print("Enter beginning port to open:")
+    #from_port = input()
+    #print("Enter ending port range to open:")
+    #to_port = input()
+    #print("Enter IP address to allow traffic as CIDR format:")
+    #cidr_ip = input()
+    #conn.ex_authorize_security_group(name=sg_name, from_port=from_port, to_port=to_port, cidr_ip=cidr_ip, protocol='tcp')
+
+    """
+        add security group ingress rule by ip, security group and other aws account
+    """
+    #print("Enter the id of the security group:")
+    #sg_id = input()
+    #print("Enter beginning port to allow as ingress:")
+    #from_port = input()
+    #print("Enter ending port to allow as egress:")
+    #to_port = input()
+    #print("Enter IP address to allow ingress traffic as CIDR format:") #need to input as list
+    #cidr_ips = list(input().split())
+    #keep group_pairs commented as long as not needed
+    #group_pairs = [{'group_name': 'default', 'user_id': '1234567890'}]
+    #conn.ex_authorize_security_group_ingress(id=sg_id, from_port=from_port, to_port=to_port, cidr_ips=cidr_ips, group_pairs=None, protocol='tcp')
+
+    """
+        add security group egress rule by ip, security group and other aws account
+    """
+    #print("Enter the id of the security group:")
+    #sg_id = input()
+    #print("Enter beginning port to allow as egress:")
+    #from_port = input()
+    #print("Enter ending port to allow as egress:")
+    #to_port = input()
+    #print("Enter IP address to allow egress traffic as CIDR format:") #need to input as list
+    #cidr_ips = list(input().split())
+    #keep group_pairs commented as long as not needed
+    #group_pairs = [{'group_name': 'default', 'user_id': '1234567890'}]
+    #conn.ex_authorize_security_group_egress(id=sg_id, from_port=from_port, to_port=to_port, cidr_ips=cidr_ips, group_pairs=None, protocol='tcp')
+
+
+    """
+
+    """
+
+    """
+        print security group list
+    """
+    print(conn.ex_list_security_groups())
