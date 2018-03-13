@@ -10,37 +10,59 @@ class AwsCloud:
     __aws_credential_path   = None
     __access_id             = None
     __secret_id             = None
-    __id                    = None
-    __name                  = None
 
     def __init__(self):
         self.__aws_credential_path  = path.expanduser('~/.aws/credentials')
 
     def __enter__(self):
-        with open(self.__aws_credential_path,'r') as f:
-            for i,line in enumerate(f):
-                if i>0:
-                    key_id,val = line.partition('=')[::2]
-                    self.__awskey.update({key_id.strip():val.strip()})
+        try:
+            with open(self.__aws_credential_path,'r') as f:
+                for i,line in enumerate(f):
+                    if i>0:
+                        key_id,val = line.partition('=')[::2]
+                        self.__awskey.update({key_id.strip():val.strip()})
 
-        self.__access_id = self.__awskey['aws_access_key_id']
-        self.__secret_id = self.__awskey['aws_secret_access_key']
-        return self
+                self.__access_id = self.__awskey['aws_access_key_id']
+                self.__secret_id = self.__awskey['aws_secret_access_key']
+                return self
+        except:
+            print("invalid aws configuration filepath or content!")
+            return -1
 
     def __exit__(self, exc_type, exc_value, traceback):
         return self
 
     def get_id(self, id):
         self.id = id
+        return self
 
     def get_name(self, name):
         self.name = name
+        return self
 
     def connect_aws(self):
-        cls     = get_driver(Provider.EC2)                          #class
-        driver  = cls(self.__access_id, self.__secret_id)           #object
+        cls = get_driver(Provider.EC2)                          #class
+        driver = cls(self.__access_id, self.__secret_id)           #object
         return driver
 
 with AwsCloud() as cloud:
     conn = cloud.connect_aws()
+
+    """
+        add key pair from file
+    """
+    #key_file_path = path.expanduser('~/.ssh/id_rsa.pub')
+    #print("new keypair name: ")
+    #key_name=input()
+    #conn.import_key_pair_from_file(name=key_name, key_file_path=key_file_path)
+
+    """
+        remove keypair
+    """
+    #print("Enter keypair name: ")
+    #key_name = input()
+    #key = cloud.get_name(key_name)
+    #conn.delete_key_pair(key)
+
+
     print(conn.list_key_pairs())
