@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+
+from libcloud.compute.types import Provider
+from libcloud.compute.providers import get_driver
+from libcloud.compute.base import Node, NodeDriver, NodeLocation, NodeSize, NodeImage, \
+    StorageVolume
+from libcloud.compute.types import NodeState, KeyPairDoesNotExistError, \
+    StorageVolumeState, VolumeSnapshotState
+from os import path
+
+class AwsCloud:
+    __awskey                = {}
+    __aws_credential_path   = None
+    __access_id             = None
+    __secret_id             = None
+    __region                = None
+
+    def __init__(self, credential_path, region):
+        self.__aws_credential_path  = path.expanduser(credential_path)
+        self.__region = region
+
+    def __enter__(self):
+        try:
+            with open(self.__aws_credential_path,'r') as f:
+                for i,line in enumerate(f):
+                    if i>0:
+                        key_id,val = line.partition('=')[::2]
+                        self.__awskey.update({key_id.strip():val.strip()})
+
+                self.__access_id = self.__awskey['aws_access_key_id']
+                self.__secret_id = self.__awskey['aws_secret_access_key']
+                return self
+        except:
+            print("invalid aws configuration filepath or content!")
+            return -1
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        return self
+
+    def get_id(self, id):
+        self.id = id
+        return self
+
+    def get_name(self, name):
+        self.name = name
+        return self
+
+    def connect_aws(self):
+        cls = get_driver(Provider.EC2)                                          #class
+        driver = cls(self.__access_id, self.__secret_id, self.__region)         #object
+        return driver
+
+with AwsCloud('~/.aws/credentials','us-east-1') as cloud:
+    conn = cloud.connect_aws()
+
+    """
+        create ec2 node with provisioning
+    """
+    #ami_id = 'ami-66506c1c'
+    #size_id = 't2.micro'
+    #key_name = 'test'
+    #sg_list = ['TestWebSG', 'default']
+
+    #sizes = conn.list_sizes()
+    #size = [s for s in sizes if s.id == size_id][0]
+    #image = NodeImage(id=ami_id, name=None, driver=conn)
+
+    #with open('./userdata/debian','r') as f:
+    #    userdata=f.read()
+
+    #node = conn.create_node(name='test-node', ex_keyname=key_name, ex_securitygroup=sg_list, ex_userdata=userdata, image=image, size=size)
+    #print(node)
+
+    """
+        destroy ec2 instance
+    """
+    #id = 'i-0a2b8e9dd9228d698'
+    #node = cloud.get_id(id)
+    #conn.destroy_node(node)
+
+    """
+        create ebs volume (issues, not working)
+
+        VALID_VOLUME_TYPES = ['standard', 'io1', 'gp2', 'st1', 'sc1']
+        standard = magnetic
+        io1 = IOPS SSD
+        gp2 = General Purpose SSD
+        st1 = Throughput Optimized SSD
+        sc1 = Cold HDD
+    """
+    #size = 15 #GB
+    #name = 'test-purpose'
+    #ex_volume_type = 'gp2'
+
+    #volume = conn.create_volume(size=size, name=name, ex_volume_type=ex_volume_type)
+    #print(volume)
+
+    """
+        list ebs volumes
+    """
+    #print(conn.list_volumes())
+
+    """
+        list ec2 nodes
+    """
+    #print(conn.list_nodes())

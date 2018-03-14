@@ -10,9 +10,11 @@ class AwsCloud:
     __aws_credential_path   = None
     __access_id             = None
     __secret_id             = None
+    __region                = None
 
-    def __init__(self):
-        self.__aws_credential_path  = path.expanduser('~/.aws/credentials')
+    def __init__(self, credential_path, region):
+        self.__aws_credential_path  = path.expanduser(credential_path)
+        self.__region = region
 
     def __enter__(self):
         try:
@@ -45,7 +47,7 @@ class AwsCloud:
         driver = cls(self.__access_id, self.__secret_id)            #object
         return driver
 
-with AwsCloud() as cloud:
+with AwsCloud('~/.aws/credentials','us-east-1') as cloud:
     conn = cloud.connect_aws()
 
     """
@@ -166,8 +168,6 @@ with AwsCloud() as cloud:
     #keep group_pairs commented as long as not needed
     #group_pairs = [{'group_name': 'default', 'user_id': '1234567890'}]
     #conn.ex_revoke_security_group_egress(id=sg_id, from_port=from_port, to_port=to_port, cidr_ips=cidr_ips, group_pairs=None, protocol='tcp')
-
-
 
     """
         print security group list
