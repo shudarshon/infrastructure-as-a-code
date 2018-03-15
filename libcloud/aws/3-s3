@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+
+from libcloud.storage.types import Provider
+from libcloud.storage.providers import get_driver
+from libcloud.storage.base import Object, Container, StorageDriver
+from os import path
+
+class AwsCloud:
+    __awskey                = {}
+    __aws_credential_path   = None
+    __access_id             = None
+    __secret_id             = None
+    __region                = None
+
+    def __init__(self, credential_path, region):
+        self.__aws_credential_path  = path.expanduser(credential_path)
+        self.__region = region
+
+    def __enter__(self):
+        try:
+            with open(self.__aws_credential_path,'r') as f:
+                for i,line in enumerate(f):
+                    if i>0:
+                        key_id,val = line.partition('=')[::2]
+                        self.__awskey.update({key_id.strip():val.strip()})
+
+                self.__access_id = self.__awskey['aws_access_key_id']
+                self.__secret_id = self.__awskey['aws_secret_access_key']
+                return self
+        except:
+            print("invalid aws configuration filepath or content!")
+            return -1
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        return self
+
+    def get_id(self, id):
+        self.id = id
+        return self
+
+    def get_name(self, name):
+        self.name = name
+        return self
+
+    def connect_aws(self):
+        cls = get_driver(Provider.S3)
+        driver = cls(self.__access_id, self.__secret_id)
+        return driver
+
+with AwsCloud('~/.aws/credentials','us-east-1') as cloud:
+    conn = cloud.connect_aws()
+
+    """
+        container is this class is not meant to be actual containers here.\
+        for aws it is alternate term of s3 bucket.
+    """
+    """
+        get s3 bucket (use ARN of S3 bucket)
+    """
+    #container_name = 'arn:aws:s3:::s3-bucket-name'
+    #container = conn.get_container(container_name)
+    #print(container)
+
