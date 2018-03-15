@@ -29,7 +29,6 @@
         "most_recent": true
       },
       "tags": {
-        "Name": "Ubuntu-Java",
         "CreationDate": "{{timestamp}}",
         "Builder": "Packer",
         "OS_Version": "Ubuntu",
@@ -41,6 +40,18 @@
     {
       "type": "shell",
       "script": "scripts/bootstrap"
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "playbook/play.yml",
+      "playbook_dir": "playbook"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "rm -rf /tmp/*",
+        "rm -f /tmp/.ansible-lock.*"
+      ]
     }
   ]
 }
