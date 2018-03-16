@@ -1,2 +1,11 @@
 #!/bin/bash
-sleep 30
+sudo sleep 30
+sudo apt-get update -y
+#sudo apt-get install python-dev python-pip -y
+curl -O https://bootstrap.pypa.io/get-pip.py | sudo python get-pip.py
+rm get-pip.py
+sudo pip install --upgrade pip
+sudo pip install --upgrade ansible
+sudo pip install --upgrade awscli
+sudo timedatectl set-timezone Asia/Dhaka
+sudo localectl set-locale LANG=en_US.utf8

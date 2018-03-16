@@ -1,0 +1,53 @@
+---
+- name: install java in ubuntu
+  hosts: localhost
+  connection: local
+  become: true
+
+  vars:
+    - oracle_java_version: 8
+    - oracle_java_cache_valid_time: 3600
+    - oracle_java_home: "/usr/lib/jvm/java-{{ oracle_java_version }}-oracle"
+    - oracle_java_state: latest
+    
+  tasks:
+
+    - name: Add java ppa repository
+      apt_repository:
+        repo=ppa:webupd8team/java
+        state=present
+      tags: [add_ppa]
+
+    - block:
+      - name: Ensure the webupd8 launchpad apt repository key is present
+        apt_key:
+          id=0xC2518248EEA14886
+          keyserver=keyserver.ubuntu.com
+          state=present
+
+      - name: Ensure the webupd8 launchpad apt repository is present
+        apt_repository:
+          repo="{{ item }} http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main"
+          update_cache=yes
+          state=present
+        with_items:
+          - deb
+          - deb-src
+
+      when: ansible_distribution == 'Debian'
+
+    - name: Set license as accepted
+      debconf: name='oracle-java{{ oracle_java_version }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+      tags: [accept_license]
+
+    - name: Ensure Java is installed
+      apt:
+        name="oracle-java{{ oracle_java_version }}-installer"
+        state={{ oracle_java_state }}
+        cache_valid_time={{ oracle_java_cache_valid_time }}
+        update_cache=yes
+      tags: [install_java]
+
+    - name: Export JAVA_HOME java_build_path
+      shell: "export JAVA_HOME={{ oracle_java_home }}"
+      tags: [export_java_home]
