@@ -1,0 +1,5 @@
+#!/bin/bash
+apt-get remove --purge ansible -y
+apt-get autoremove -y
+apt-get autoclean -y
+rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* rm -rf /var/cache/*

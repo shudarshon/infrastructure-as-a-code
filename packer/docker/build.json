@@ -1,0 +1,34 @@
+{
+  "builders": [
+    {
+      "type": "docker",
+      "image": "phusion/baseimage:latest",
+      "commit": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/bootstrap"
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "ansible/play.yml",
+      "playbook_dir": "ansible"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/clean"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "dchaks/testimage",
+        "tag": "0.1"
+      },
+      "docker-push"
+    ]
+  ]
+}
