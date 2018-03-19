@@ -3,7 +3,12 @@
     {
       "type": "docker",
       "image": "phusion/baseimage:latest",
-      "commit": true
+      "commit": true,
+      "changes": [
+        "WORKDIR /opt",
+        "EXPOSE 8080",
+        "ENTRYPOINT [\"/usr/bin/java\", \"-jar\", \"app.war\"]"
+      ]
     }
   ],
   "provisioners": [
@@ -26,7 +31,7 @@
       {
         "type": "docker-tag",
         "repository": "dchaks/testimage",
-        "tag": "0.1"
+        "tag": "latest"
       },
       "docker-push"
     ]
