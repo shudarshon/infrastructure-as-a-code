@@ -2,26 +2,12 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
-# compute
-
-resource "aws_db_instance" "db" {
-  allocated_storage = 10
-  engine    = "mysql"
-  engine_version  = "5.6.27"
-  instance_class  = "${var.db_instance_class}"
-  name      = "${var.dbname}"
-  username    = "${var.dbuser}"
-  password    = "${var.dbpassword}"
-  db_subnet_group_name  = "${aws_db_subnet_group.rds_subnetgroup.name}"
-  vpc_security_group_ids = ["${aws_security_group.RDS.id}"]
-}
-
-
 # key pair
 
 resource "aws_key_pair" "auth" {
   key_name  ="${var.key_name}"
   public_key = "${file(var.public_key_path)}"
+  #key_file = "${var.key_path}"   # uncomment if you want to use existing ssh key
 }
 
 
@@ -41,11 +27,11 @@ resource "aws_instance" "dev" {
 
   provisioner "local-exec" {
       command = <<EOD
-          cat <<EOF > hosts
-          [dev]
-          ${aws_instance.dev.public_ip}
-          EOF
-      EOD
+cat <<EOF > hosts
+[dev]
+${aws_instance.dev.public_ip}
+EOF
+EOD
   }
 
   provisioner "local-exec" {
