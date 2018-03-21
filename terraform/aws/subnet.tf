@@ -1,3 +1,6 @@
+# Data Source
+data "aws_availability_zones" "available" {}
+
 resource "aws_subnet" "public" {
   vpc_id = "${aws_vpc.vpc.id}"
   cidr_block = "10.1.1.0/24"
@@ -52,7 +55,6 @@ resource "aws_subnet" "rds2" {
     Name = "rds2"
   }
 }
-
 
 resource "aws_subnet" "rds3" {
   vpc_id = "${aws_vpc.vpc.id}"
