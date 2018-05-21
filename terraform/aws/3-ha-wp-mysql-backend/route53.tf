@@ -1,5 +1,3 @@
-#---------Route53-------------
-
 #primary zone
 
 resource "aws_route53_zone" "primary" {
@@ -28,7 +26,7 @@ resource "aws_route53_record" "dev" {
   name    = "dev.${var.domain_name}.com"
   type    = "A"
   ttl     = "300"
-  records = ["${aws_instance.wp_dev.public_ip}"]
+  records = ["${aws_instance.DevInstanceAWS.public_ip}"]
 }
 
 #secondary zone
@@ -45,5 +43,5 @@ resource "aws_route53_record" "db" {
   name    = "db.${var.domain_name}.com"
   type    = "CNAME"
   ttl     = "300"
-  records = ["${aws_db_instance.wp_db.address}"]
+  records = ["${aws_db_instance.RDSWebApp.address}"]
 }

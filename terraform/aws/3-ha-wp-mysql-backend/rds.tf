@@ -1,4 +1,4 @@
-resource "aws_db_instance" "wp_db" {
+resource "aws_db_instance" "RDSWebApp" {
   allocated_storage      = 10
   engine                 = "mysql"
   engine_version         = "5.6.27"

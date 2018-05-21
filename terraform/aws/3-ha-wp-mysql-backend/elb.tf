@@ -1,5 +1,3 @@
-#load balancer
-
 resource "aws_elb" "wp_elb" {
   name = "${var.domain_name}-elb"
 

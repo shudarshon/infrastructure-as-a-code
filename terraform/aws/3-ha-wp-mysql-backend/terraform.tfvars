@@ -46,6 +46,6 @@ asg_min			= "1"
 asg_grace		= "300"
 asg_hct			= "EC2"
 asg_cap			= "2"
-lc_instance_type	= "t2.micro"
+asg_instance_type	= "t2.medium"
 delegation_set 		= "N1HDAZB52OQ3IV"
 test = {}

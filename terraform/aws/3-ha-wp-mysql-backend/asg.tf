@@ -2,11 +2,11 @@
 
 resource "aws_launch_configuration" "wp_lc" {
   name_prefix          = "wp_lc-"
-  image_id             = "${aws_ami_from_instance.wp_golden.id}"
-  instance_type        = "${var.lc_instance_type}"
+  image_id             = "${aws_ami_from_instance.GoldenAMI.id}"
+  instance_type        = "${var.asg_instance_type}"
   security_groups      = ["${aws_security_group.wp_private_sg.id}"]
   iam_instance_profile = "${aws_iam_instance_profile.s3_access_profile.id}"
-  key_name             = "${aws_key_pair.wp_auth.id}"
+  key_name             = "${aws_key_pair.SSHKeyPair.id}"
   user_data            = "${file("userdata")}"
 
   lifecycle {

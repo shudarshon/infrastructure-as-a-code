@@ -1,6 +1,5 @@
 variable "aws_region" {}
 variable "aws_profile" {}
-data "aws_availability_zones" "available" {}
 
 variable "rds_identifier" {}
 variable "db_instance_type" {}
@@ -42,5 +41,5 @@ variable "asg_grace" {}
 variable "asg_hct" {}
 variable "asg_cap" {}
 
-variable "lc_instance_type" {}
+variable "asg_instance_type" {}
 variable "delegation_set" {}
