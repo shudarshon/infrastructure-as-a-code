@@ -4,37 +4,73 @@ provider "aws" {
 
 # key pair
 
-resource "aws_key_pair" "auth" {
-  key_name  ="${var.key_name}"
+resource "aws_key_pair" "SSHKeyPair" {
+  key_name  ="${var.ssh_key_name}"
   public_key = "${file(var.public_key_path)}"
-  #key_file = "${var.key_path}"   # uncomment if you want to use existing ssh key
 }
 
 
 # server
 
-resource "aws_instance" "dev" {
-  instance_type = "${var.dev_instance_type}"
-  ami = "${var.dev_ami}"
-  tags {
-    Name = "app-instance"
-  }
-
-  key_name = "${aws_key_pair.auth.id}"
-  vpc_security_group_ids = ["${aws_security_group.public.id}"]
+resource "aws_instance" "DevInstanceAWS" {
+  count = "${var.instance_count}"
+  instance_type = "${var.instance_type}"
+  #subnet_id = "${var.subnet_id}"
   subnet_id = "${aws_subnet.public.id}"
+  ami = "${var.ami_id}"
+  key_name = "${var.ssh_key_name}"
+  tags {
+    Name = "${var.instance_name}"
+  }
+  security_groups = [
+        #"${var.security_group}"
+        "${aws_security_group.public.id}"
+  ]
+}
 
-
+resource "null_resource" "ConfigureAnsibleLabelVariable" {
   provisioner "local-exec" {
-      command = <<EOD
-cat <<EOF > hosts
-[dev]
-${aws_instance.dev.public_ip}
-EOF
-EOD
+    command = "echo [${var.dev_host_label}:vars] > hosts"
+  }
+  provisioner "local-exec" {
+    command = "echo ansible_ssh_user=${var.ssh_user_name} >> hosts"
+  }
+  provisioner "local-exec" {
+    command = "echo ansible_ssh_private_key_file=${var.public_key_path} >> hosts"
+  }
+  provisioner "local-exec" {
+    command = "echo [${var.dev_host_label}] >> hosts"
+  }
+}
+
+resource "null_resource" "ProvisionRemoteHostsIpToAnsibleHosts" {
+  count = "${var.instance_count}"
+  connection {
+    type = "ssh"
+    user = "${var.ssh_user_name}"
+    host = "${element(aws_instance.DevInstanceAWS.*.public_ip, count.index)}"
+    private_key = "${file("${var.ssh_key_path}")}"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y",
+      "sudo yum install python-setuptools python-pip -y",
+      "sudo pip install httplib2"
+    ]
+  }
+  provisioner "local-exec" {
+    command = "echo ${element(aws_instance.DevInstanceAWS.*.public_ip, count.index)} >> hosts"
+  }
+}
+
+resource "null_resource" "ModifyApplyAnsiblePlayBook" {
+  provisioner "local-exec" {
+    command = "sed -i -e '/hosts:/ s/: .*/: ${var.dev_host_label}/' play.yml"   #change host label in playbook dynamically
   }
 
   provisioner "local-exec" {
-    command = "sleep 6m && ansible-playbook -i hosts app.yml"
+    command = "sleep 10; ansible-playbook -i hosts play.yml"
   }
+  depends_on = ["aws_db_instance.RDSWebApp"]
+  depends_on = ["null_resource.ProvisionRemoteHostsIpToAnsibleHosts"]
 }

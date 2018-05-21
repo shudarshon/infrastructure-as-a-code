@@ -1,9 +1,9 @@
 #Security groups
 
 resource "aws_security_group" "public" {
-  name = "sg_public"
+  name = "AllowSshHttpSG"
   description = "Used for public and private instances for load balancer access"
-  vpc_id = "${aws_vpc.vpc.id}"
+  vpc_id = "${aws_vpc.VPC.id}"
 
   #SSH
 
@@ -36,9 +36,9 @@ resource "aws_security_group" "public" {
 #Private Security Group
 
 resource "aws_security_group" "private" {
-  name        = "sg_private"
+  name        = "VPCTrafficAllowSG"
   description = "Used for private instances"
-  vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = "${aws_vpc.VPC.id}"
 
 
   # Access from other security groups
@@ -47,7 +47,7 @@ resource "aws_security_group" "private" {
     from_port    = 0
     to_port      = 0
     protocol     = "-1"
-    cidr_blocks  = ["10.1.0.0/16"]
+    cidr_blocks  = ["${var.vpc_cidr}"]
   }
 
   egress {
@@ -59,10 +59,11 @@ resource "aws_security_group" "private" {
 }
 
 #RDS Security Group
+
 resource "aws_security_group" "RDS" {
-  name= "sg_rds"
+  name= "MySqlAllowSG"
   description = "Used for DB instances"
-  vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = "${aws_vpc.VPC.id}"
 
   # SQL access from public/private security group
 
@@ -70,6 +71,6 @@ resource "aws_security_group" "RDS" {
     from_port        = 3306
     to_port          = 3306
     protocol         = "tcp"
-    security_groups  = ["${aws_security_group.public.id}", "${aws_security_group.private.id}"]
+    security_groups  = ["${aws_security_group.public.id}","${aws_security_group.private.id}"]
   }
 }

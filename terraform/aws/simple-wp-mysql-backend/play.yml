@@ -1,7 +1,6 @@
 ---
 - name: install wordpress app
   hosts: dev
-  remote_user: ec2-user
   become: true
 
   tasks:
