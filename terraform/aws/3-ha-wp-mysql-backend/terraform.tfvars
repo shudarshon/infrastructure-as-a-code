@@ -28,7 +28,7 @@ instance_count         = 1
 ami_id 		             = "ami-14c5486b"
 dev_host_label         = "dev"
 
-localip                = "103.216.59.97/32"
+localip                = "x.x.x.x/32"
 ssh_user_name          = "ec2-user"
 ssh_key_name 		       = "id_rsa"
 ssh_key_path           = "/home/chaks/.ssh/id_rsa"

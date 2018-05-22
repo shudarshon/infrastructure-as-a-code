@@ -14,8 +14,8 @@ resource "aws_autoscaling_group" "WebAppASG" {
   force_delete              = true
   load_balancers            = ["${aws_elb.WebAppELB.id}"]
 
-  vpc_zone_identifier = ["${aws_subnet.wp_private1_subnet.id}",
-    "${aws_subnet.wp_private2_subnet.id}",
+  vpc_zone_identifier = ["${aws_subnet.wp_public2_subnet.id}",
+    "${aws_subnet.wp_public1_subnet.id}",
   ]
 
   launch_configuration = "${aws_launch_configuration.WebAppASGLaunchConfig.name}"
