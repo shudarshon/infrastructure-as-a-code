@@ -1,4 +1,4 @@
-resource "aws_elb" "wp_elb" {
+resource "aws_elb" "WebAppELB" {
   name = "${var.domain_name}-elb"
 
   subnets = ["${aws_subnet.wp_public1_subnet.id}",

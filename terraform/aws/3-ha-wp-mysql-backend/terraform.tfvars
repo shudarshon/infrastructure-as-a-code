@@ -34,7 +34,7 @@ ssh_key_name 		       = "id_rsa"
 ssh_key_path           = "/home/chaks/.ssh/id_rsa"
 public_key_path 	     = "/home/chaks/.ssh/id_rsa.pub"
 
-domain_name		= "bravethecloud"
+domain_name		= "devopslab"
 
 elb_healthy_threshold   = "2"
 elb_unhealthy_threshold = "2"

@@ -1,6 +1,5 @@
 provider "aws" {
   region  = "${var.aws_region}"
-  profile = "${var.aws_profile}"
 }
 
 data "aws_availability_zones" "available" {}
@@ -73,7 +72,6 @@ resource "null_resource" "ModifyApplyAnsiblePlayBook" {
 
   provisioner "local-exec" {
     command = "sleep 10; ansible-playbook -i hosts play.yml"
-    #command = "aws ec2 wait instance-status-ok --instance-ids ${aws_instance.DevInstanceAWS.id} && ansible-playbook -i hosts play.yml"
   }
   depends_on = ["aws_db_instance.RDSWebApp"]
   depends_on = ["null_resource.ProvisionRemoteHostsIpToAnsibleHosts"]

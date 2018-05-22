@@ -3,5 +3,6 @@
 terraform.tfstate
 terraform.tfstate.backup
 hosts
-userdata
+userdata*
 *.tfvars
+*.bkp
