@@ -2,6 +2,6 @@
 sudo yum update -y
 sudo yum install python-setuptools python-pip -y
 sudo pip install awscli
-/usr/bin/aws s3 sync s3://devopslab-35041 /var/www/html/
+/usr/bin/aws s3 sync s3://devopslab-33523 /var/www/html/
 /bin/touch /var/spool/cron/root
-sudo /bin/echo '*/5 * * * * aws s3 sync s3://devopslab-35041 /var/www/html/' >> /var/spool/cron/root
+sudo /bin/echo '*/5 * * * * aws s3 sync s3://devopslab-33523 /var/www/html/' >> /var/spool/cron/root

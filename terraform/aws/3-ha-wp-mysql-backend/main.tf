@@ -22,6 +22,7 @@ resource "aws_instance" "DevInstanceAWS" {
   security_groups = [
         "${aws_security_group.wp_dev_sg.id}"
   ]
+
 }
 
 resource "null_resource" "ConfigureAnsibleLabelVariable" {
