@@ -1,4 +1,0 @@
-*.tfstate*
-hosts
-*.info
-.terraform
